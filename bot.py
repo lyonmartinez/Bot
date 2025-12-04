@@ -39,8 +39,8 @@ def load_config():
         print("[WARN] Không tìm thấy config.json, đang dùng config.example.json / biến môi trường.")
 
     # 3) Ghi đè bằng biến môi trường (tuỳ chọn)
-    model_env = os.getenv("OPENROUTER_MODEL")
-    api_base_env = os.getenv("OPENROUTER_API_BASE")
+    model_env = os.getenv("OPENAI_MODEL")
+    api_base_env = os.getenv("OPENAI_API_BASE")
     system_context_env = os.getenv("SYSTEM_CONTEXT")
     error_message_env = os.getenv("ERROR_MESSAGE")
 
@@ -382,7 +382,7 @@ async def on_message(message):
     try:
         async with aiohttp.ClientSession() as session:
             # Ưu tiên lấy API key từ biến môi trường nếu có, ngược lại dùng trong config.json
-            api_key = os.getenv("OPENROUTER_API_KEY", config.get("api_key"))
+            api_key = os.getenv("OPENAI_API_KEY", config.get("api_key"))
             headers = {
                 "Authorization": f"Bearer {api_key}",
                 "Content-Type": "application/json"
