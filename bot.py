@@ -6,11 +6,49 @@ import asyncio
 import aiohttp
 
 CONFIG_FILE = "config.json"
+DEFAULT_CONFIG_FILE = "config.example.json"
 
 # Load config
 def load_config():
-    with open(CONFIG_FILE, "r") as f:
-        return json.load(f)
+    """
+    Thứ tự ưu tiên:
+    1. config.example.json (default).
+    2. Ghi đè bằng config.json nếu file này tồn tại (local).
+    3. Ghi đè tiếp bằng biến môi trường nếu có (trên Railway).
+    """
+    config_data = {}
+
+    # 1) Load config mặc định
+    try:
+        with open(DEFAULT_CONFIG_FILE, "r") as f:
+            config_data.update(json.load(f))
+    except FileNotFoundError:
+        # Không có file example cũng không sao, sẽ fallback sang env
+        pass
+
+    # 2) Ghi đè bằng config.json nếu tồn tại
+    try:
+        with open(CONFIG_FILE, "r") as f:
+            config_data.update(json.load(f))
+    except FileNotFoundError:
+        print("[WARN] Không tìm thấy config.json, đang dùng config.example.json / biến môi trường.")
+
+    # 3) Ghi đè bằng biến môi trường (tuỳ chọn)
+    model_env = os.getenv("OPENROUTER_MODEL")
+    api_base_env = os.getenv("OPENROUTER_API_BASE")
+    system_context_env = os.getenv("SYSTEM_CONTEXT")
+    error_message_env = os.getenv("ERROR_MESSAGE")
+
+    if model_env:
+        config_data["model"] = model_env
+    if api_base_env:
+        config_data["api_base"] = api_base_env
+    if system_context_env:
+        config_data["system_context"] = system_context_env
+    if error_message_env:
+        config_data["error_message"] = error_message_env
+
+    return config_data
 
 def save_config(config):
     with open(CONFIG_FILE, "w") as f:
