@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Local config and secrets (không push lên GitHub)
+config.json
+.env
+
+# IDE files
+.vscode/
+.idea/
+
+
