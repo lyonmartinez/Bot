@@ -1,2 +1,6 @@
 discord.py
 aiohttp
+beautifulsoup4
+lxml
+duckduckgo-search
+html2text
